@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Tennis Page";
+}
+<style>
+    table, td {
+        border: 2px solid lightgray;
+        padding: 25px;
+    }
+</style>
+
+<div class="text-center">
+    <h1 class="display-4">Tennis Reservation</h1>
+    <p style="color:green;">We only have one tennis court. Reservation is only allowed 1 day in advance.</p>
+    <p style="color:green;">Every Reservation is 1 hour (if you want the reserve for longer, please make more than one reservation)</p>
+    <p style="color:green;">Tennis court is open everyday 10AM - 5PM</p>
+
+    <div>
+        <section>
+            <img src="/img/tennisCourtImage.jpg" style="width:1000px; height: 450px">
+        </section>
+    </div>
+    <div>
+
+        <table id="Tennis-table" style="width:100%; margin-top:20px;">
+            @foreach (var row in Model)
+            {
+                <tr>
+                    <td>@row[0]</td>
+                    @if (row[1] == "Available")
+                    {
+                        <td class="chair-status" style="background-color:#93ef93;">@row[1]</td>
+                        <td><input type="button" onclick="SendTennisCourtReservationRequestToController('@row[1]', '@row[0]')" value="Reserve" /></td>
+                    }
+                    else
+                    {
+                        <td style="background-color:#e8bdbd;">@row[1]</td>
+                        <td><input type="button" onclick="SendTennisCourtReservationRequestToController('@row[1]', '@row[0]')" value="cancel" /></td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+<script>
+    // Reserve/cancel time request
+    function SendTennisCourtReservationRequestToController(reserveOrCancel, time) {
+        var isReserve = (reserveOrCancel == "Available")? true:false;
+        reservationSendData("/api/Home/TennisRequest?time=" + time + "&&isReserve=" + isReserve, isReserve);
+    }
+</script>

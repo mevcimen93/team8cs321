@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Pool Page";
+}
+<style>
+    table, td {
+        border: 2px solid lightgray;
+        padding: 25px;
+    }
+</style>
+
+<div class="text-center">
+    <h1 class="display-4">Pool Reservation</h1>
+    <p style="color:green;">We have 10 chairs to reserve. Reservations are only allowed 1 day in advance.</p>
+    <p style="color:green;">Every Reservation is 1 hour (if you want the chair for longer, please make more than one reservation)</p>
+    <p style="color:green;">Pool opens everyday 10AM - 5PM</p>
+
+    <div>
+        <section>
+            <img src="/img/poolChairs.PNG" style="width:1000px; height: 450px">
+        </section>
+    </div>
+    <div>
+        <section style="margin:40px; width:100%;">
+            <label for="pool-dropdown-select-chair">Please Select Chair Number:</label>
+            <select name="pool-dropdown-select-chair" style="width:40%; margin-left:30%;" class="form-control" id="pool-dropdown-select-chair">
+                <option value="0"></option>
+                <option value="1">Chair 1</option>
+                <option value="2">Chair 2</option>
+                <option value="3">Chair 3</option>
+                <option value="4">Chair 4</option>
+                <option value="5">Chair 5</option>
+                <option value="6">Chair 6</option>
+                <option value="7">Chair 7</option>
+                <option value="8">Chair 8</option>
+                <option value="9">Chair 9</option>
+                <option value="10">Chair 10</option>
+            </select>
+        </section>
+
+        <table id="pool-table" style="width:100%">
+            @foreach (var row in Model)
+            {
+                <tr>
+                    <td>@row[0]</td>
+                    @if (row[1] == "Available")
+                    {
+                        <td class="chair-status" style="background-color:#93ef93;">@row[1]</td>
+                        <td><input type="button" onclick="SendPoolChairReservationRequestToController('@row[1]', '@row[0]')" value="Reserve" /></td>
+                    }
+                    else
+                    {
+                        <td style="background-color:#e8bdbd;">@row[1]</td>
+                        <td><input type="button" onclick="SendPoolChairReservationRequestToController('@row[1]', '@row[0]')" value="cancel" /></td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+<script>
+    // Assign chairNumber to its dropdown
+    var chairNumber = window.location.href.substring(window.location.href.indexOf("=") + 1);
+    document.getElementById("pool-dropdown-select-chair").value = chairNumber;
+
+    // On chair selection
+    document.getElementById("pool-dropdown-select-chair").onchange = SendPoolSelectedChairNumberToController;
+    function SendPoolSelectedChairNumberToController() {
+        var e = document.getElementById("pool-dropdown-select-chair");
+        var poolSelectedChair = e.options[e.selectedIndex].value;
+
+        window.location.href = '/Home/Pool?chairNumber=' + parseInt(poolSelectedChair);
+    }
+
+    // Hide pool-table if necessary
+    if (chairNumber == "0")
+        document.getElementById("pool-table").style.display = "none";
+
+    // Reserve/cancel time request
+    function SendPoolChairReservationRequestToController(reserveOrCancel, time) {
+        var isReserve = (reserveOrCancel == "Available") ? true : false;
+        if (isReserve) {
+            var aptNumber = prompt("To reserve the chair please enter your apartment number");
+        } else {
+            var aptNumber = prompt("To cancel your reservation please enter your apartment number");
+        }
+
+        // Warning. Check if the apartment number exist before you proceed
+
+        if (aptNumber != null && aptNumber != "") {
+            reservationSendData("/api/Home/PoolRequest?chairNumber=" + chairNumber + "&&time=" + time + "&&isReserve=" + isReserve + "&&aptlNumber=" + aptNumber, isReserve);
+        }
+    }
+</script>

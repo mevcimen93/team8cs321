@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome To <span style="color:cornflowerblue">E</span><span style="color:red">Z</span>menities</h1>
+    <p style="color:green;">Please click the image of the amenity you would like to reserve</p>
+
+    <div class="container-fluid">
+        <div class="row">
+            <section id="pool-section" class="col-lg-6" style="padding: 15px 15px 0 15px;">
+                <img src="/img/poolImage.jpg" style="width:550px; height: 450px">
+            </section>
+            <section id="tennis-section" class="col-lg-6" style="padding: 15px 15px 0 15px;">
+                <img src="/img/tennisCourtImage.jpg" style="width:550px; height: 450px">
+            </section>
+        </div>
+        <div class="row">
+            <section id="basketBall-section" class="col-lg-6" style="padding: 15px 15px 0 15px;">
+                <img src="/img/basketballCourtImage.jpg" style="width:550px; height: 450px">
+            </section>
+            <section id="bbq-section" class="col-lg-6" style="padding: 15px 15px 0 15px;">
+                <img src="/img/bbqAreaImage.jpg" style="width:550px; height:450px">
+            </section>
+        </div>
+        <div>
+            <section id="gym-section" style="padding: 15px 15px 0 15px; text-align:center;">
+                <img src="/img/gymImage.jpg" style="width:550px; height:450px">
+            </section>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("pool-section").onclick = directUserToPoolPage;
+    document.getElementById("tennis-section").onclick = directUserToTennisPage;
+    document.getElementById("gym-section").onclick = directUserToGymPage;
+    document.getElementById("bbq-section").onclick = directUserToBBQPage;
+    document.getElementById("basketBall-section").onclick = directUserToBasketBallPage;
+
+    function directUserToPoolPage() {
+        window.location.href = '/Home/Pool?chairNumber=' + 0;
+    }
+    function directUserToTennisPage() {
+        window.location.href = '/Home/Tennis';
+    }
+    function directUserToGymPage() {
+        window.location.href = '/Home/Gym';
+    }
+    function directUserToBBQPage() {
+        window.location.href = '/Home/BBQ?grillNumber=' + 0;
+    }
+    function directUserToBasketBallPage() {
+        window.location.href = '/Home/BasketBall';
+    }
+</script>

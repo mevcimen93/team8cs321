@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "BBQ Grill Page";
+}
+<style>
+    table, td {
+        border: 2px solid lightgray;
+        padding: 25px;
+    }
+</style>
+
+<div class="text-center">
+    <h1 class="display-4">BBQ Grill Reservation</h1>
+    <p style="color:green;">We have 4 bbq grills to reserve. The grills are spotted around the building as in the picture below.</p>
+    <p style="color:green;">Reservations are only allowed 1 day in advance.</p>
+    <p style="color:green;">Every Reservation is 2 hours (if you want the grill for longer, please make more than one reservation)</p>
+    <p style="color:green;">Grills are open for reservation everyday 10AM - 8PM</p>
+
+    <div>
+        <section>
+            <img src="/img/bbqGrills.PNG" style="width:1000px; height: 450px">
+        </section>
+    </div>
+    <div>
+        <section style="margin:30px; width:100%;">
+            <label for="bbq-dropdown-select-grill">Please Select Grill Number:</label>
+            <select name="bbq-dropdown-select-grill" style="width:40%; margin-left:30%;" class="form-control" id="bbq-dropdown-select-grill">
+                <option value="0"></option>
+                <option value="1">Grill 1</option>
+                <option value="2">Grill 2</option>
+                <option value="3">Grill 3</option>
+                <option value="4">Grill 4</option>
+            </select>
+        </section>
+
+        <table id="grill-table" style="width:100%">
+            @foreach (var row in Model)
+            {
+                <tr>
+                    <td>@row[0]</td>
+                    @if (row[1] == "Available")
+                    {
+                        <td class="chair-status" style="background-color:#93ef93;">@row[1]</td>
+                        <td><input type="button" onclick="SendBBQGrillReservationRequestToController('@row[1]', '@row[0]')" value="Reserve" /></td>
+                    }
+                    else
+                    {
+                        <td style="background-color:#e8bdbd;">@row[1]</td>
+                        <td><input type="button" onclick="SendBBQGrillReservationRequestToController('@row[1]', '@row[0]')" value="cancel" /></td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+<script>
+    // Assign grillNumber to its dropdown
+    var grillNumber = window.location.href.substring(window.location.href.indexOf("=") + 1);
+    document.getElementById("bbq-dropdown-select-grill").value = grillNumber;
+
+    // On grill selection
+    document.getElementById("bbq-dropdown-select-grill").onchange = SendBBQSelectedGrillNumberToController;
+    function SendBBQSelectedGrillNumberToController() {
+        var e = document.getElementById("bbq-dropdown-select-grill");
+        var BBQSelectedGrill = e.options[e.selectedIndex].value;
+
+        window.location.href = '/Home/BBQ?grillNumber=' + parseInt(BBQSelectedGrill);
+    }
+
+    // Hide grill-table if necessary
+    if (grillNumber == "0")
+        document.getElementById("grill-table").style.display = "none";
+
+    // Reserve/cancel time request
+    function SendBBQGrillReservationRequestToController(reserveOrCancel, time) {
+        var isReserve = (reserveOrCancel == "Available") ? true : false;
+        if (isReserve) {
+            var aptNumber = prompt("To reserve the grill please enter your apartment number");
+        } else {
+            var aptNumber = prompt("To cancel your reservation please enter your apartment number");
+        }
+
+        // Warning. Check if the apartment number exist before you proceed
+
+        if (aptNumber != null && aptNumber != "") {
+            reservationSendData("/api/Home/GrillRequest?grillNumber=" + grillNumber + "&&time=" + time + "&&isReserve=" + isReserve + "&&aptlNumber=" + aptNumber, isReserve);
+        }
+    }
+</script>
