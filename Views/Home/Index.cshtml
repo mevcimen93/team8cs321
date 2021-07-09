@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -23,18 +23,12 @@
                 <img src="/img/bbqAreaImage.jpg" style="width:550px; height:450px">
             </section>
         </div>
-        <div>
-            <section id="gym-section" style="padding: 15px 15px 0 15px; text-align:center;">
-                <img src="/img/gymImage.jpg" style="width:550px; height:450px">
-            </section>
-        </div>
     </div>
 </div>
 
 <script>
     document.getElementById("pool-section").onclick = directUserToPoolPage;
     document.getElementById("tennis-section").onclick = directUserToTennisPage;
-    document.getElementById("gym-section").onclick = directUserToGymPage;
     document.getElementById("bbq-section").onclick = directUserToBBQPage;
     document.getElementById("basketBall-section").onclick = directUserToBasketBallPage;
 
@@ -43,9 +37,6 @@
     }
     function directUserToTennisPage() {
         window.location.href = '/Home/Tennis';
-    }
-    function directUserToGymPage() {
-        window.location.href = '/Home/Gym';
     }
     function directUserToBBQPage() {
         window.location.href = '/Home/BBQ?grillNumber=' + 0;
