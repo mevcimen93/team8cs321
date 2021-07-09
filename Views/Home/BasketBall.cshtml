@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Basketball Page";
 }
 <style>
@@ -21,20 +21,25 @@
     </div>
     <div>
 
-        <table id="Tennis-table" style="width:100%; margin-top:20px;">
+        <table id="Basketball-table" style="width:100%; margin-top:20px; ">
+            <tr>
+                <td style="text-align:center; background-color:yellow; font-weight:bold">SLOT</td>
+                <td style="text-align: center; background-color: yellow; font-weight: bold">AVAILIBILITY</td>
+                <td style="text-align: center; background-color: yellow; font-weight: bold">ACTION</td>
+            </tr>
             @foreach (var row in Model)
             {
                 <tr>
-                    <td>@row[0]</td>
+                    <td style="width: 33%">@row[0]</td>
                     @if (row[1] == "Available")
                     {
-                        <td class="chair-status" style="background-color:#93ef93;">@row[1]</td>
-                        <td><input type="button" onclick="SendTennisCourtReservationRequestToController('@row[1]', '@row[0]')" value="Reserve" /></td>
+                        <td class="chair-status" style="width: 33%; background-color:#93ef93;">@row[1]</td>
+                        <td style="width: 34%"><input type="button" onclick="SendTennisCourtReservationRequestToController('@row[1]', '@row[0]')" value="Reserve" /></td>
                     }
                     else
                     {
-                        <td style="background-color:#e8bdbd;">@row[1]</td>
-                        <td><input type="button" onclick="SendTennisCourtReservationRequestToController('@row[1]', '@row[0]')" value="cancel" /></td>
+                        <td style="background-color: #e8bdbd; width: 33%">@row[1]</td>
+                        <td style="width: 34%"><input type="button" onclick="SendTennisCourtReservationRequestToController('@row[1]', '@row[0]')" value="Cancel" /></td>
                     }
                 </tr>
             }
@@ -45,7 +50,12 @@
 <script>
     // Reserve/cancel time request
     function SendTennisCourtReservationRequestToController(reserveOrCancel, time) {
-        var isReserve = (reserveOrCancel == "Available")? true:false;
-        reservationSendData("/api/Home/BasketballRequest?time=" + time + "&&isReserve=" + isReserve, isReserve);
+        var isReserve = (reserveOrCancel == "Available") ? true : false;
+        if (isReserve) {
+            var aptNumber = prompt("To reserve the time please enter your apartment number").toUpperCase();
+        } else {
+            var aptNumber = prompt("To cancel your reservation please enter your apartment number").toUpperCase();
+        }
+        reservationSendData("/api/Home/BasketballRequest?time=" + time + "&&isReserve=" + isReserve + "&&aptlNumber=" + aptNumber, isReserve);
     }
 </script>
