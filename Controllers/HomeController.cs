@@ -37,9 +37,39 @@ namespace EZmenities.Controllers
             return dtTemp;
         }
         
+        private DataTable GetPartnerData()
+        {
+            DataTable dtPartTemp = new DataTable("PartnerDataTable");
+            //Add columns to it 
+            dtPartTemp.Columns.Add("Sport");
+            dtPartTemp.Columns.Add("Name");
+            dtPartTemp.Columns.Add("Info");
+            dtPartTemp.Columns.Add("Date");
+            if (System.IO.File.Exists("EZmenitiesPartnerData.xml"))
+                dtPartTemp.ReadXml("EZmenitiesPartnerData.xml");
+            // Clean the dates that are expired 
+            Boolean found = false;
+            for (int i = dtPartTemp.Rows.Count - 1; i > -1; i--)
+            {
+                if (dtPartTemp.Rows[i]["Date"].ToString() != DateTime.Today.AddDays(1).ToString("MM/dd/yyyy"))
+                {
+                    dtPartTemp.Rows.RemoveAt(i);
+                    found = true;
+                }
+            }
+            if (found)
+                dtPartTemp.WriteXml("EZmenitiesPartnerData.xml");
+            return dtPartTemp;
+        }
+        
         private void SaveData(DataTable dtTemp)
         {
             dtTemp.WriteXml("EZmenitiesData.xml");
+        }
+        
+        private void SaveDataPartner(DataTable dtPartTemp)
+        {
+            dtPartTemp.WriteXml("EZmenitiesPartnerData.xml");
         }
         
         public HomeController(ILogger<HomeController> logger)
@@ -163,26 +193,18 @@ namespace EZmenities.Controllers
 
         public IActionResult PartnerFinder(string sportName)
         {
+            DataTable dt = GetPartnerData();
             var data = new List<List<string>>();
-
-            // Add record
-            var row = new List<string>();
-            row.Add("Yasser");
-            row.Add("example@gmu.edu");
-            data.Add(row);
-
-            // Add record
-            row = new List<string>();
-            row.Add("Melisa");
-            row.Add("example@gmu.edu");
-            data.Add(row);
-
-            // Add record
-            row = new List<string>();
-            row.Add("Phuong");
-            row.Add("example@gmu.edu");
-            data.Add(row);
-
+            foreach (DataRow drTmp in dt.Rows)
+            {
+                if (drTmp["Sport"].ToString() == sportName)
+                {
+                    var row = new List<string>();
+                    row.Add(drTmp["Name"].ToString());
+                    row.Add(drTmp["Info"].ToString());
+                    data.Add(row);
+                }
+            }
             return View(data);
         }
 
@@ -191,6 +213,15 @@ namespace EZmenities.Controllers
         {
             try
             {
+                DataTable dtp = GetPartnerData();
+                DataRow dr = dtp.NewRow();
+                dr["Sport"] = sportName;
+                dr["Name"] = name;
+                dr["Info"] = contactInfo;
+                dr["Date"] = DateTime.Today.AddDays(1).ToString("MM/dd/yyyy");
+                dtp.Rows.Add(dr);
+                SaveDataPartner(dtp);
+
                 return new ObjectResult(true);
             }
             catch (Exception e)
