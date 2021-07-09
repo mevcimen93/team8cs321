@@ -161,6 +161,44 @@ namespace EZmenities.Controllers
             return View();
         }
 
+        public IActionResult PartnerFinder(string sportName)
+        {
+            var data = new List<List<string>>();
+
+            // Add record
+            var row = new List<string>();
+            row.Add("Yasser");
+            row.Add("example@gmu.edu");
+            data.Add(row);
+
+            // Add record
+            row = new List<string>();
+            row.Add("Melisa");
+            row.Add("example@gmu.edu");
+            data.Add(row);
+
+            // Add record
+            row = new List<string>();
+            row.Add("Phuong");
+            row.Add("example@gmu.edu");
+            data.Add(row);
+
+            return View(data);
+        }
+
+        [HttpPost, Route("api/[controller]/[action]")]
+        public IActionResult PartnerFinderRequest(string sportName, string name, string contactInfo)
+        {
+            try
+            {
+                return new ObjectResult(true);
+            }
+            catch (Exception e)
+            {
+                return new ObjectResult(false);
+            }
+        }
+        
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
