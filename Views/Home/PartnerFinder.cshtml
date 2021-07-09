@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "Tennis Page";
+}
+<style>
+    table, td {
+        border: 2px solid lightgray;
+        padding: 25px;
+    }
+</style>
+
+<div class="text-center">
+    <h1 class="display-4">Partner Finder</h1>
+    <p style="color:green;">You want to play sport and you do not have a partner?</p>
+    <p style="color:green;">Here, at EZmenities, you can sign up for PartnerFinder and meet up with new friends.</p>
+    <p style="color:green;">You can start by selecting the sport you would like to play tomorrow. If a person in the community would like to play the same sport tomorrow, you will find their name's and contact info</p>
+    <p style="color:red;">We keep the information of the signed up people until tomorrow. After that, the information will be deleted</p>
+
+    <div>
+        <section>
+            <img src="/img/tennisCourtImage.jpg" style="width:1000px; height: 450px">
+        </section>
+    </div>
+    <div>
+        <section style="margin:40px; width:100%;">
+            <label for="partnerFinder-dropdown-select-sport">Please Select Sport:</label>
+            <select name="partnerFinder-dropdown-select-sport" style="width:40%; margin-left:30%;" class="form-control" id="partnerFinder-dropdown-select-sport">
+                <option value="0"></option>
+                <option value="tennis">Tennis</option>
+                <option value="basketball">BasketBall</option>
+            </select>
+        </section>
+
+        <section id="PartnerFinder-table-section">
+            <input type="button" style="width:40%; margin-left:30%;" class="form-control" id="partnerFinder-addInfo-btn" value="Click To Add Your Information" />
+            <table id="PartnerFinder-table" style="width:100%; margin-top:20px;">
+                <tr>
+                    <td style="text-align:center; background-color:yellow; font-weight:bold">Name</td>
+                    <td style="text-align: center; background-color: yellow; font-weight: bold">Contact Information</td>
+                </tr>
+                @foreach (var row in Model)
+                {
+                    <tr>
+                        <td style="width: 50%">@row[0]</td>
+                        <td class="chair-status" style="width: 50%">@row[1]</td>
+                    </tr>
+                }
+            </table>
+        </section>
+    </div>
+</div>
+
+<script>
+    // Assign sportName to its dropdown
+    var sportName = window.location.href.substring(window.location.href.indexOf("=") + 1);
+    document.getElementById("partnerFinder-dropdown-select-sport").value = sportName;
+
+    // Hide PartnerFinder-table if necessary
+    if (sportName == "0")
+        document.getElementById("PartnerFinder-table-section").style.display = "none";
+
+    // On sportName selection
+    document.getElementById("partnerFinder-dropdown-select-sport").onchange = SendPartnerFinderSelectedSportToController;
+    function SendPartnerFinderSelectedSportToController() {
+        var e = document.getElementById("partnerFinder-dropdown-select-sport");
+        var partnerFinderSelectedSport = e.options[e.selectedIndex].value;
+
+        window.location.href = '/Home/PartnerFinder?sportName=' + partnerFinderSelectedSport;
+    }
+
+    // Add user to PartnerFinder list
+    document.getElementById("partnerFinder-addInfo-btn").onclick = SendAddContactInformationRequestToController;
+    function SendAddContactInformationRequestToController() {
+        var name = prompt("To Add yourself to the list, please insert your name:").toUpperCase();
+
+        if (name != "" && name != null)
+            var contactInfo = prompt("Now please insert you preffered contact method that you want your future sports partner to contact you through:").toUpperCase();
+        else
+            alert("No name was inserted. A name is required to complete this action. Please try again.");
+
+        if (name != "" && name != null && (contactInfo == "" || contactInfo == null))
+            alert("No contact Information was inserted. contact Information is required to complete this action. Please try again.");
+
+        if (name != "" && name != null && contactInfo != "" && contactInfo != null) {
+            var userAgreeOnTerms = confirm("Do you give your consent to publish the information so other people in the community can use it to contact you?");
+            if (userAgreeOnTerms) {
+                var e = document.getElementById("partnerFinder-dropdown-select-sport");
+                var SelectedSport = e.options[e.selectedIndex].value;
+
+                partnerFinder("/api/Home/PartnerFinderRequest?sportName=" + SelectedSport + "&&name=" + name + "&&contactInfo=" + contactInfo);
+            } else {
+                alert("We respect your privacy. The information is deleted permenantly.");
+            }
+        }
+    }
+</script>
