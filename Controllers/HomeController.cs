@@ -179,11 +179,6 @@ namespace EZmenities.Controllers
             return View(data);
         }
 
-        public IActionResult Gym()
-        {
-            return View();
-        }
-
         public IActionResult Privacy()
         {
             return View();
