@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Pool Page";
 }
 <style>
@@ -10,47 +10,49 @@
 
 <div class="text-center">
     <h1 class="display-4">Pool Reservation</h1>
-    <p style="color:green;">We have 10 chairs to reserve. Reservations are only allowed 1 day in advance.</p>
-    <p style="color:green;">Every Reservation is 1 hour (if you want the chair for longer, please make more than one reservation)</p>
+    <p style="color:green;">We have 10 times to reserve. Reservations are only allowed 1 day in advance.</p>
+    <p style="color:green;">Every Reservation is 1 hour (if you want the time for longer, please make more than one reservation)</p>
     <p style="color:green;">Pool opens everyday 10AM - 5PM</p>
 
     <div>
         <section>
-            <img src="/img/poolChairs.PNG" style="width:1000px; height: 450px">
+            <img src="/img/poolchairs.PNG" style="width:1000px; height: 450px">
         </section>
     </div>
     <div>
         <section style="margin:40px; width:100%;">
-            <label for="pool-dropdown-select-chair">Please Select Chair Number:</label>
-            <select name="pool-dropdown-select-chair" style="width:40%; margin-left:30%;" class="form-control" id="pool-dropdown-select-chair">
+            <label for="pool-dropdown-select-time">Please Select Time:</label>
+            <select name="pool-dropdown-select-time" style="width:40%; margin-left:30%;" class="form-control" id="pool-dropdown-select-time">
                 <option value="0"></option>
-                <option value="1">Chair 1</option>
-                <option value="2">Chair 2</option>
-                <option value="3">Chair 3</option>
-                <option value="4">Chair 4</option>
-                <option value="5">Chair 5</option>
-                <option value="6">Chair 6</option>
-                <option value="7">Chair 7</option>
-                <option value="8">Chair 8</option>
-                <option value="9">Chair 9</option>
-                <option value="10">Chair 10</option>
+                <option value="1">10AM - 11AM</option>
+                <option value="2">11AM - 12PM</option>
+                <option value="3">12PM - 1PM</option>
+                <option value="4">1PM - 2PM</option>
+                <option value="5">2PM - 3PM</option>
+                <option value="6">3PM - 4PM</option>
+                <option value="7">4PM - 5PM</option>
             </select>
         </section>
 
         <table id="pool-table" style="width:100%">
+            <tr>
+                <td style="text-align:center; background-color:yellow; font-weight:bold">CHAIR</td>
+                <td style="text-align: center; background-color: yellow; font-weight: bold">AVAILIBILITY</td>
+                <td style="text-align: center; background-color: yellow; font-weight: bold">ACTION</td>
+            </tr>
             @foreach (var row in Model)
             {
                 <tr>
-                    <td>@row[0]</td>
+                    <td style="width:33%">@row[0]</td>
                     @if (row[1] == "Available")
                     {
-                        <td class="chair-status" style="background-color:#93ef93;">@row[1]</td>
-                        <td><input type="button" onclick="SendPoolChairReservationRequestToController('@row[1]', '@row[0]')" value="Reserve" /></td>
+                        <td class="time-status" style="background-color:#93ef93; width:33%">@row[1]</td>
+                        <td style="width:34%"><input type="button" onclick="SendPoolTimeReservationRequestToController('@row[1]', '@row[0]')" value="Reserve" /></td>
                     }
                     else
                     {
-                        <td style="background-color:#e8bdbd;">@row[1]</td>
-                        <td><input type="button" onclick="SendPoolChairReservationRequestToController('@row[1]', '@row[0]')" value="cancel" /></td>
+                        <td style="background-color:#e8bdbd; width:33%">@row[1]</td>
+                        <td style="width:34%"><input type="button" onclick="SendPoolTimeReservationRequestToController('@row[1]', '@row[0]')" value="Cancel" /></td>
                     }
                 </tr>
             }
@@ -59,36 +61,36 @@
 </div>
 
 <script>
-    // Assign chairNumber to its dropdown
-    var chairNumber = window.location.href.substring(window.location.href.indexOf("=") + 1);
-    document.getElementById("pool-dropdown-select-chair").value = chairNumber;
+    // Assign timeNumber to its dropdown
+    var time = window.location.href.substring(window.location.href.indexOf("=") + 1);
+    document.getElementById("pool-dropdown-select-time").value = time;
 
-    // On chair selection
-    document.getElementById("pool-dropdown-select-chair").onchange = SendPoolSelectedChairNumberToController;
-    function SendPoolSelectedChairNumberToController() {
-        var e = document.getElementById("pool-dropdown-select-chair");
-        var poolSelectedChair = e.options[e.selectedIndex].value;
+    // On time selection
+    document.getElementById("pool-dropdown-select-time").onchange = SendPoolSelectedtimeToController;
+    function SendPoolSelectedtimeToController() {
+        var e = document.getElementById("pool-dropdown-select-time");
+        var poolSelectedtime = e.options[e.selectedIndex].value;
 
-        window.location.href = '/Home/Pool?chairNumber=' + parseInt(poolSelectedChair);
+        window.location.href = '/Home/Pool?time=' + parseInt(poolSelectedtime);
     }
 
     // Hide pool-table if necessary
-    if (chairNumber == "0")
+    if (time == "0")
         document.getElementById("pool-table").style.display = "none";
 
     // Reserve/cancel time request
-    function SendPoolChairReservationRequestToController(reserveOrCancel, time) {
+    function SendPoolTimeReservationRequestToController(reserveOrCancel, seat) {
         var isReserve = (reserveOrCancel == "Available") ? true : false;
         if (isReserve) {
-            var aptNumber = prompt("To reserve the chair please enter your apartment number");
+            var aptNumber = prompt("To reserve the time please enter your apartment number").toUpperCase();
         } else {
-            var aptNumber = prompt("To cancel your reservation please enter your apartment number");
+            var aptNumber = prompt("To cancel your reservation please enter your apartment number").toUpperCase();
         }
 
         // Warning. Check if the apartment number exist before you proceed
 
         if (aptNumber != null && aptNumber != "") {
-            reservationSendData("/api/Home/PoolRequest?chairNumber=" + chairNumber + "&&time=" + time + "&&isReserve=" + isReserve + "&&aptlNumber=" + aptNumber, isReserve);
+            reservationSendData("/api/Home/PoolRequest?chairNumber=" + seat+" &&time=" + time + "&&isReserve=" + isReserve + "&&aptlNumber=" + aptNumber, isReserve);
         }
     }
 </script>
