@@ -36,12 +36,14 @@
                 <tr>
                     <td style="text-align:center; background-color:yellow; font-weight:bold">Name</td>
                     <td style="text-align: center; background-color: yellow; font-weight: bold">Contact Information</td>
+                    <td style="text-align:center; background-color:yellow; font-weight:bold">Prefered Time</td>
                 </tr>
                 @foreach (var row in Model)
                 {
                     <tr>
-                        <td style="width: 50%">@row[0]</td>
-                        <td class="chair-status" style="width: 50%">@row[1]</td>
+                        <td style="width: 33%">@row[0]</td>
+                        <td class="chair-status" style="width: 34%">@row[1]</td>
+                        <td class="chair-status" style="width: 34%">@row[2]</td>
                     </tr>
                 }
             </table>
@@ -79,14 +81,20 @@
 
         if (name != "" && name != null && (contactInfo == "" || contactInfo == null))
             alert("No contact Information was inserted. contact Information is required to complete this action. Please try again.");
+        
+        if (name != "" && name != null && contactInfo != "" && contactInfo != null)
+            var preferedTime = prompt("Now please insert you prefered time:").toUpperCase();
+        
+        if (name != "" && name != null && contactInfo != "" && contactInfo != null && (preferedTime == "" || preferedTime == null))
+            alert("No prefered time was inserted. Prefered time is required to complete this action. Please try again.");
 
-        if (name != "" && name != null && contactInfo != "" && contactInfo != null) {
+        if (name != "" && name != null && contactInfo != "" && contactInfo != null && preferedTime != "" && preferedTime != null) {
             var userAgreeOnTerms = confirm("Do you give your consent to publish the information so other people in the community can use it to contact you?");
             if (userAgreeOnTerms) {
                 var e = document.getElementById("partnerFinder-dropdown-select-sport");
                 var SelectedSport = e.options[e.selectedIndex].value;
 
-                partnerFinder("/api/Home/PartnerFinderRequest?sportName=" + SelectedSport + "&&name=" + name + "&&contactInfo=" + contactInfo);
+                partnerFinder("/api/Home/PartnerFinderRequest?sportName=" + SelectedSport + "&&name=" + name + "&&contactInfo=" + contactInfo + "&&preferedTime=" + preferedTime);
             } else {
                 alert("We respect your privacy. The information is deleted permenantly.");
             }
