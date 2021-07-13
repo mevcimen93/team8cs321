@@ -44,6 +44,7 @@ namespace EZmenities.Controllers
             dtPartTemp.Columns.Add("Sport");
             dtPartTemp.Columns.Add("Name");
             dtPartTemp.Columns.Add("Info");
+            dtPartTemp.Columns.Add("PreferedTime");
             dtPartTemp.Columns.Add("Date");
             if (System.IO.File.Exists("EZmenitiesPartnerData.xml"))
                 dtPartTemp.ReadXml("EZmenitiesPartnerData.xml");
@@ -202,6 +203,7 @@ namespace EZmenities.Controllers
                     var row = new List<string>();
                     row.Add(drTmp["Name"].ToString());
                     row.Add(drTmp["Info"].ToString());
+                    row.Add(drTmp["PreferedTime"].ToString());
                     data.Add(row);
                 }
             }
@@ -209,7 +211,7 @@ namespace EZmenities.Controllers
         }
 
         [HttpPost, Route("api/[controller]/[action]")]
-        public IActionResult PartnerFinderRequest(string sportName, string name, string contactInfo)
+        public IActionResult PartnerFinderRequest(string sportName, string name, string contactInfo, string preferedTime)
         {
             try
             {
@@ -218,6 +220,7 @@ namespace EZmenities.Controllers
                 dr["Sport"] = sportName;
                 dr["Name"] = name;
                 dr["Info"] = contactInfo;
+                dr["PreferedTime"] = preferedTime;
                 dr["Date"] = DateTime.Today.AddDays(1).ToString("MM/dd/yyyy");
                 dtp.Rows.Add(dr);
                 SaveDataPartner(dtp);
