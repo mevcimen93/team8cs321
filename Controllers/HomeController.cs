@@ -1,16 +1,18 @@
-﻿using EZmenities.Models;
+using EZmenities.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
+using System.Linq;
 
 namespace EZmenities.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        
+
         private DataTable GetData()
         {
             DataTable dtTemp = new DataTable("DataTable");
@@ -36,7 +38,7 @@ namespace EZmenities.Controllers
                 dtTemp.WriteXml("EZmenitiesData.xml");
             return dtTemp;
         }
-        
+
         private DataTable GetPartnerData()
         {
             DataTable dtPartTemp = new DataTable("PartnerDataTable");
@@ -62,17 +64,17 @@ namespace EZmenities.Controllers
                 dtPartTemp.WriteXml("EZmenitiesPartnerData.xml");
             return dtPartTemp;
         }
-        
+
         private void SaveData(DataTable dtTemp)
         {
             dtTemp.WriteXml("EZmenitiesData.xml");
         }
-        
+
         private void SaveDataPartner(DataTable dtPartTemp)
         {
             dtPartTemp.WriteXml("EZmenitiesPartnerData.xml");
         }
-        
+
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -83,7 +85,7 @@ namespace EZmenities.Controllers
             return View();
         }
 
-        public IActionResult Pool(int chairNumber)
+        public IActionResult Pool(string time)
         {
             DataTable dt = GetData();
             var data = new List<List<string>>();
@@ -161,9 +163,9 @@ namespace EZmenities.Controllers
             return View(data);
         }
 
-        public IActionResult BBQ(int grillNumber)
+        public IActionResult BBQ(string time)
         {
-           DataTable dt = GetData();
+            DataTable dt = GetData();
             var data = new List<List<string>>();
             int[] Grills = { 1, 2, 3, 4 };
             foreach (int grill in Grills)
@@ -232,7 +234,7 @@ namespace EZmenities.Controllers
                 return new ObjectResult(false);
             }
         }
-        
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -240,9 +242,9 @@ namespace EZmenities.Controllers
         }
 
         [HttpPost, Route("api/[controller]/[action]")]
-        public IActionResult PoolRequest(int chairNumber, string time, bool isReserve, int aptlNumber)
+        public IActionResult PoolRequest(int chairNumber, string time, bool isReserve, string aptlNumber)
         {
-           try
+            try
             {
                 DataTable dt = GetData();
                 if (isReserve)
@@ -275,7 +277,7 @@ namespace EZmenities.Controllers
         }
 
         [HttpPost, Route("api/[controller]/[action]")]
-        public IActionResult TennisRequest(string time, bool isReserve)
+        public IActionResult TennisRequest(string time, bool isReserve, string aptlNumber)
         {
             try
             {
@@ -309,7 +311,7 @@ namespace EZmenities.Controllers
         }
 
         [HttpPost, Route("api/[controller]/[action]")]
-        public IActionResult BasketballRequest(string time, bool isReserve)
+        public IActionResult BasketballRequest(string time, bool isReserve, string aptlNumber)
         {
             try
             {
@@ -345,7 +347,7 @@ namespace EZmenities.Controllers
         [HttpPost, Route("api/[controller]/[action]")]
         public IActionResult GrillRequest(int grillNumber, string time, bool isReserve, string aptlNumber)
         {
-           try
+            try
             {
                 DataTable dt = GetData();
                 if (isReserve)
